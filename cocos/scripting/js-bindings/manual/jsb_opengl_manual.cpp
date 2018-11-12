@@ -2163,13 +2163,24 @@ static bool JSB_glTexImage2D(se::State& s) {
         SE_PRECONDITION4(count >= width * height * bytes, false, GL_INVALID_OPERATION);
     }
 #endif
-    ccFlipYOrPremultiptyAlphaIfNeeded(format, width, height, count, pixels);
+    // Have a copy to not modify original data.
+    void* pixelCopy = malloc(count);
+    if (!pixelCopy) return true;
+    memcpy(pixelCopy, pixels, count);
+    
+    GLint prevUnpackAlighment = 0;
+    glGetIntegerv(GL_UNPACK_ALIGNMENT, &prevUnpackAlighment);
+    
+    ccFlipYOrPremultiptyAlphaIfNeeded(format, width, height, count, pixelCopy);
     if (alignment > 0)
         ccPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
     else
         setUnpackAlignmentByWidthAndFormat(width, format);
     
-    JSB_GL_CHECK(glTexImage2D((GLenum)target , (GLint)level , (GLint)internalformat , (GLsizei)width , (GLsizei)height , (GLint)border , (GLenum)format , (GLenum)type , (GLvoid*)pixels));
+    JSB_GL_CHECK(glTexImage2D((GLenum)target , (GLint)level , (GLint)internalformat , (GLsizei)width , (GLsizei)height , (GLint)border , (GLenum)format , (GLenum)type , (GLvoid*)pixelCopy));
+    
+    free(pixelCopy);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, prevUnpackAlighment);
 
     return true;
 }
