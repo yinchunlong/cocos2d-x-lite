@@ -2168,19 +2168,19 @@ static bool JSB_glTexImage2D(se::State& s) {
     if (!pixelCopy) return true;
     memcpy(pixelCopy, pixels, count);
     
-    GLint prevUnpackAlighment = 0;
-    glGetIntegerv(GL_UNPACK_ALIGNMENT, &prevUnpackAlighment);
+//    GLint prevUnpackAlighment = 0;
+//    glGetIntegerv(GL_UNPACK_ALIGNMENT, &prevUnpackAlighment);
     
     ccFlipYOrPremultiptyAlphaIfNeeded(format, width, height, count, pixelCopy);
-    if (alignment > 0)
-        ccPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-    else
-        setUnpackAlignmentByWidthAndFormat(width, format);
+//    if (alignment > 0)
+//        ccPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+//    else
+//        setUnpackAlignmentByWidthAndFormat(width, format);
     
     JSB_GL_CHECK(glTexImage2D((GLenum)target , (GLint)level , (GLint)internalformat , (GLsizei)width , (GLsizei)height , (GLint)border , (GLenum)format , (GLenum)type , (GLvoid*)pixelCopy));
     
     free(pixelCopy);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, prevUnpackAlighment);
+//    glPixelStorei(GL_UNPACK_ALIGNMENT, prevUnpackAlighment);
 
     return true;
 }
