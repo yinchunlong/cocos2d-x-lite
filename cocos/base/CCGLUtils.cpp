@@ -460,14 +460,14 @@ namespace
 
     void premultiplyByte(GLvoid* pixels, uint32_t pixelBytes)
     {
-        const GLubyte *table = premultiplyTable();
         uint8_t* pointer = (uint8_t*)pixels;
+        const GLubyte *table = premultiplyTable();
         for (int i = 0; i < pixelBytes; i += 4)
         {
-            uint32_t index = pointer[3] * 256;
-            pointer[0] = table[index + pointer[0]];
-            pointer[1] = table[index + pointer[1]];
-            pointer[2] = table[index + pointer[2]];
+            uint32_t index = pointer[i+3] * 256;
+            pointer[i] = table[index + pointer[i]];
+            pointer[i+1] = table[index + pointer[i+1]];
+            pointer[i+2] = table[index + pointer[i+2]];
         }
     }
 }
